@@ -29,8 +29,6 @@ def addMember():
     
     DataMember.to_csv("Data/dataTest.csv", index=False)
 
-
-pilihan = 0
 while(True):   
     print("1. Tambah Member")
     print("2. List Member")
