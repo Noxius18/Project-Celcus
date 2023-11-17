@@ -6,4 +6,4 @@
 3. Status Peminjaman Buku
 4. Output List buku yang tersedia
 
-Kalo mau nambah lagi tinggal bilang aja di conversation
+Kalo mau nambah lagi tinggal bilang aja <a href="https://github.com/Noxius18/Project-Biblio/discussions/1">Disini</a>
