@@ -6,14 +6,24 @@ platformUser = platform.system()
 
 DataMember = pd.DataFrame(columns=["Nama", "Email", "Password"])
 
-if(os.path.exists("Data/dataTest.csv")):
-    DataMember = pd.read_csv("Data/dataTest.csv")
+pathData = os.path.join("Data", "Member", "Member.csv")
+
+
+"""
+Berfungsi untuk Cek apakah Folder Data Tersedia
+Jika tidak ada maka akan membuat Direktori untuk menyimpan List Member
+User yang sudah dibuat dan menyimpannya
+"""
+if(os.path.exists(pathData)):
+    DataMember = pd.read_csv(pathData)
 else:
-    os.mkdir("Data")
-    if(platformUser == "Linux"):
-        os.system("touch Data/dataTest.csv")
-    # elif(platformUser == "Windows"):
-    """Jangan Lupa di Windows tambahain Command buat bikin file"""
+    os.makedirs(os.path.dirname(pathData), exist_ok = True)
+    open(pathData, 'w').close()
+
+
+def clearCLS():
+    if(platformUser == "Linux"): os.system("clear")
+    if(platformUser == "Windows"): os.system("cls")
 
 def addMember():
     global DataMember
@@ -27,7 +37,8 @@ def addMember():
         "Email": emailMember, 
         "Password": passwordMember}, ignore_index = True)
     
-    DataMember.to_csv("Data/dataTest.csv", index=False)
+    DataMember.to_csv(pathData, index = False)
+
 
 while(True):   
     print("1. Tambah Member")
@@ -35,20 +46,20 @@ while(True):
     print("3. Keluar")
     case = int(input("Pilih Menu: "))
 
-    os.system("clear")
+    clearCLS()
 
     if(case == 1):
         addMember()
-        os.system("clear")
+        clearCLS()
     elif(case == 2):
         keluar = 0
         if(keluar != 1):
             subData = DataMember.filter(items=["Nama", "Email"])
-            os.system("clear")
+            clearCLS()
             print(subData)
             print("\n1. Keluar")
             keluar = int(input("> "))
-        os.system("clear")
+        clearCLS()
     else:
         break
-        os.system("clear")
+        clearCLS()
