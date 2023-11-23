@@ -36,17 +36,3 @@ def listBuku():
     output = tabulate(DataBuku, showindex = False, headers=["Judul Buku", "Author", "Tahun Terbit", "Genre Buku"], 
                       tablefmt="github")
     print(output)
-
-while(True):
-    print(f"""
-1. Input Buku
-2. List Buku
-""")
-    opsi = int(input("> "))
-
-    if(opsi == 1):
-        inputBuku()
-    elif(opsi == 2):
-        listBuku()
-    else:
-        print("Opsi tidak Valid")
