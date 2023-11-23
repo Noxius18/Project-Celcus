@@ -5,10 +5,10 @@ import os
 DataBuku = pd.DataFrame(columns = ["Judul", "Author", "Tahun", "Genre"])
 direktoriBuku = os.path.join("Data", "listBuku", "listBuku.csv")
 
-if(os.path.exist(direktoriBuku)):
+if(os.path.exists(direktoriBuku)):
     DataBuku = pd.read_csv(direktoriBuku)
 else:
-    os.makedirs(os.path.dirname(direktoriBuku))
+    os.makedirs(os.path.dirname(direktoriBuku), exist_ok = True)
 
 def inputBuku():
     global DataBuku
@@ -25,11 +25,28 @@ def inputBuku():
     DataBuku = DataBuku._append({
         "Judul": judulBuku,
         "Author": authorBuku,
-        "Tahun Terbit": tahunBuku,
+        "Tahun": tahunBuku,
         "Genre": genreBuku
     }, ignore_index = True)
 
     DataBuku.to_csv(direktoriBuku, index = False)
 
+def listBuku():
+    DataBuku = pd.read_csv(direktoriBuku)
+    output = tabulate(DataBuku, showindex = False, headers=["Judul Buku", "Author", "Tahun Terbit", "Genre Buku"], 
+                      tablefmt="github")
+    print(output)
 
+while(True):
+    print(f"""
+1. Input Buku
+2. List Buku
+""")
+    opsi = int(input("> "))
 
+    if(opsi == 1):
+        inputBuku()
+    elif(opsi == 2):
+        listBuku()
+    else:
+        print("Opsi tidak Valid")
