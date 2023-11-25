@@ -1,5 +1,5 @@
-ID,Judul,Genre,JenisAuthor,Status,Jenis,Author
-JOC,Judgement of Corruption,Psychological,,Tersedia,Fiksi,G. Marlon
-TOE,Tailor of Enbizaka,Thriller,,Tersedia,Fiksi,Sudou Kayo
-PM-AM,Project MA: Adam Moonlit,Dystopian,,Sedang Dipinjam,Fiksi,Eve Moonlit
-PM-EV,Project MA: Eve Moonlit,Psychological,,Tersedia,Fiksi,Adam Moonlit
+ID,Judul,Genre,Jenis,Author,Status
+JOC,Judgement of Corruption,Thriller Psikologis,Fiksi,G. Marlon,Tersedia
+TOE,Tailor of Enbizaka,Thriller,Fiksi,Sudou Kayo,Sedang Dipinjam
+PM-AM,Project MA: Adam Moonlit,Dystopian,Fiksi,Eve Moonlit,Tersedia
+PM-EV,Project MA: Eve Moonlit,Psikologis,Fiksi,Adam Moonlit,Tersedia

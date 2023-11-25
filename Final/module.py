@@ -18,7 +18,7 @@ console = Console()
 
 class DataBuku:
     def __init__(self, data_direktori) -> None:
-        self.dataBuku = pd.DataFrame(columns=["ID", "Judul", "Genre", "Jenis" "Author", "Status"])
+        self.dataBuku = pd.DataFrame(columns=["ID", "Judul", "Genre", "Jenis", "Author", "Status"])
         self.direktori_buku = os.path.join("Data", data_direktori + ".csv")
     
     def cek_direktori_buku(self) -> None:
@@ -100,7 +100,7 @@ class DataBuku:
                           row.Status, style=warna_status)
            
         console.print(table)
-        
+
 class PanelAdmin:
     def __init__(self, data_direktori) -> None:
         self.data = pd.DataFrame(columns=["username", "password"])
