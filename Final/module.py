@@ -1,17 +1,13 @@
 import pandas as pd
 import os
-from rich.console import Console
-from rich.table import Table
-from rich import box
-import time
+import pwinput as pw
+from time import sleep as wait
 import platform
+from rich.console import Console; from rich.table import Table; from rich import box
 
 def clear():
     if(platform.system() == "Linux"): os.system("clear")
     if(platform.system() == "Windows"): os.system("cls")
-
-def wait(int):
-    return time.sleep(int)
 
 console = Console()
 
@@ -115,7 +111,7 @@ class PanelAdmin:
     
     def tambah_admin(self) -> None:
         userAdmin = str(input(("Input User Admin Baru: ")))
-        passAdmin = str(input("Input Password Admin Baru: "))
+        passAdmin = pw.pwinput(prompt="Input Password Admin Baru: ")
 
         self.data = self.data._append({
             "username": userAdmin,
@@ -136,3 +132,48 @@ class PanelAdmin:
             console.print("[red]Kredensial Salah!, Silahkan Masuk kembali")
             wait(1); clear()
             
+class PanelMember:
+    def __init__(self, direktori_data) -> None:
+        self.data = pd.DataFrame(columns=["Nama", "Email", "Password"])
+        self.direktori_member = os.path.join("Data", direktori_data + ".csv")
+    
+    def cek_direktori(self) -> None:
+        if(os.path.exists(self.direktori_member)):
+            self.data = pd.read_csv(self.direktori_member)
+        else:
+            os.makedirs(os.path.dirname(self.direktori_member), exist_ok=True)
+    
+    def tambah_member(self) -> None:
+        userNama = str(input("Nama Anda: "))
+        userMail = str(input("Email Anda: "))
+        userPass = pw.pwinput(prompt="Input Password: ")
+
+        self.data = self.data._append({
+            "Nama": userNama,
+            "Email": userMail,
+            "Password": userPass
+        }, ignore_index=True)
+
+        self.data.to_csv(self.direktori_member, index=False)
+    
+    def login_member(self) -> None:
+        login_mail = str(input("Input Email: "))
+        login_pass = pw.pwinput(prompt="Input Password: ")
+
+        cek_data = self.data[(self.data["Email"] == login_mail) & (self.data["Password"] == login_pass)]
+
+        if(cek_data.empty):
+            clear()
+            console.print(f"[yellow]Data tidak ditemukan, silahkan Register untuk Melanjutkan")
+            wait(1)
+            self.tambah_member()
+        else:
+            cek_nama = self.data.loc[self.data["Email"] == login_mail, "Nama"].values[0]
+            if(not cek_data.empty):
+                console.print(f"[green]Login Berhasil!")
+                console.print(f"Selamat Datang [blue]{cek_nama}")
+            else:
+                clear()
+                console.print(f"[red]Kredensial Salah, Silahkan login kembali")
+                wait(1)
+                self.login_member()
