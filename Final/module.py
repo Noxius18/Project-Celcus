@@ -3,11 +3,10 @@ import os
 import pwinput as pw
 from time import sleep as wait
 import platform
-from rich.console import Console; from rich.table import Table; from rich import box
+from rich.console import Console; from rich.table import Table; from rich import box, emoji
 
 def clear():
-    if(platform.system() == "Linux"): os.system("clear")
-    if(platform.system() == "Windows"): os.system("cls")
+    os.system("cls") if platform.system() == "Windows" else os.system("clear")
 
 console = Console()
 
@@ -24,7 +23,7 @@ class DataBuku:
             os.makedirs(os.path.dirname(self.direktori_buku), exist_ok=True)
     
     def tambah_buku(self) -> None:
-
+        console.print("[INPUT BUKU]", justify="left", style="bold chartreuse3")
         judulBuku = str(input("Judul Buku: "))
         authorBuku = str(input("Author Buku: "))
         genreBuku = str(input("Genre Buku: "))
@@ -42,9 +41,14 @@ class DataBuku:
         }, ignore_index=True)
 
         self.dataBuku.to_csv(self.direktori_buku, index=False)
+
+        console.print(f"Buku Berhasil Ditambahkan!:white_check_mark:", style="bold green")
+        wait(1)
+        clear()
     
     def pinjam_buku(self) -> None:
-        print("Input ID Buku yang ingin dipinjam")
+        self.lihat_buku()
+        console.print("Input [deep_sky_blue1]ID[/deep_sky_blue1] Buku yang ingin dipinjam")
         userPinjam = str(input("> ")).upper()
 
         list_buku = self.dataBuku[self.dataBuku["ID"] == userPinjam].index
@@ -53,17 +57,19 @@ class DataBuku:
             judul_buku = self.dataBuku.loc[self.dataBuku["ID"] == userPinjam, "Judul"].values[0]
             status_buku = self.dataBuku.loc[self.dataBuku["ID"] == userPinjam, "Status"].values[0]
 
-            if(status_buku == "Sedang Dipinjam"): console.print(f"[yellow]Buku {judul_buku} sedang dipinjam")
+            if(status_buku == "Sedang Dipinjam"): 
+                console.print(f"[yellow]Buku [dodger_blue2]{judul_buku}[/dodger_blue2] sedang dipinjam")
             else:
                 self.dataBuku.loc[list_buku, "Status"] = "Sedang Dipinjam"
                 self.dataBuku.to_csv(self.direktori_buku, index=False)
-                console.print(f"[green]Kamu telah meminjam buku {judul_buku}")
-                console.print(f"[dodger_blue2]Jika sudah selesai membaca harap ke Meja Counter untuk dikembalikan")
+                console.print(f"Kamu telah meminjam buku [dodger_blue2]{judul_buku}[/dodger_blue2]:white_check_mark:", style="spring_green3")
+                console.print(f"Jika sudah selesai membaca harap ke Meja Counter untuk dikembalikan:twelve_o’clock:", style="orange_red1")
         else:
-            console.print("[red]Maaf, Buku Tidak Tersedia")
+            console.print("Maaf, Buku Tidak Tersedia:exclamation_mark:", style="bold red")
      
     def balikin_buku(self) -> None:
-        print("Input ID Buku yang ingin Dikembalikan")
+        self.lihat_buku()
+        console.print("Input [deep_sky_blue1]ID[/deep_sky_blue1] Buku yang ingin Dikembalikan")
         userBalik = str(input("> ")).upper()
 
         list_buku = self.dataBuku[self.dataBuku["ID"] == userBalik].index
@@ -72,7 +78,9 @@ class DataBuku:
         if(not list_buku.empty):
             self.dataBuku.loc[list_buku, "Status"] = "Tersedia"
             self.dataBuku.to_csv(self.direktori_buku, index=False)
-            console.print(f'[green]Buku {judul_buku} telah dikembalikan')
+            console.print(f'Buku [dodger_blue2]{judul_buku}[/dodger_blue2] telah dikembalikan:white_check_mark:', style="bold green")
+            wait(3)
+            clear()
     
     def lihat_buku(self) -> None:
         index_buku = self.dataBuku
@@ -110,6 +118,7 @@ class PanelAdmin:
             os.makedirs(os.path.dirname(self.data_direktori), exist_ok=True)
     
     def tambah_admin(self) -> None:
+        console.print("[TAMBAH ADMIN BARU]", style='bold green')
         userAdmin = str(input(("Input User Admin Baru: ")))
         passAdmin = pw.pwinput(prompt="Input Password Admin Baru: ")
 
@@ -119,18 +128,23 @@ class PanelAdmin:
         }, ignore_index=True)
 
         self.data.to_csv(self.data_direktori, index=False)
+        console.print("[bold green]Admin berhasil ditambah:white_check_mark:")
+        wait(1); clear()
     
-    def login_admin(self) -> None: 
+    def login_admin(self) -> bool: 
+        console.print("[LOGIN ADMIN]", style="bold blue", justify="left")
         login_user = str(input("Input Username: "))
-        login_pass = str(input("Input Password: "))
+        login_pass = pw.pwinput(prompt="Input Password: ")
 
         cek_data = self.data[(self.data["username"] == login_user) & (self.data["password"] == login_pass)]
         if(not cek_data.empty):
-            console.print("[green]Login Berhasil!")
+            console.print("Login Berhasil!:white_check_mark:", style='bold green')
             wait(1); clear()
+            return True
         else:
-            console.print("[red]Kredensial Salah!, Silahkan Masuk kembali")
+            console.print("Kredensial Salah!, Silahkan Masuk kembali:exclamation_mark:", style="bold red")
             wait(1); clear()
+            return False
             
 class PanelMember:
     def __init__(self, direktori_data) -> None:
@@ -144,9 +158,12 @@ class PanelMember:
             os.makedirs(os.path.dirname(self.direktori_member), exist_ok=True)
     
     def tambah_member(self) -> None:
+        console.print("[REGISTRASI MEMBER]", style="bold green", justify="left")
         userNama = str(input("Nama Anda: "))
         userMail = str(input("Email Anda: "))
         userPass = pw.pwinput(prompt="Input Password: ")
+        console.print("Registrasi Berhasil!:white_check_mark:", style="bold green")
+        wait(1); clear()
 
         self.data = self.data._append({
             "Nama": userNama,
@@ -156,24 +173,28 @@ class PanelMember:
 
         self.data.to_csv(self.direktori_member, index=False)
     
-    def login_member(self) -> None:
+    def login_member(self) -> bool:
+        console.print("[LOGIN MEMBER]", style="bold blue", justify="left")
         login_mail = str(input("Input Email: "))
         login_pass = pw.pwinput(prompt="Input Password: ")
 
         cek_data = self.data[(self.data["Email"] == login_mail) & (self.data["Password"] == login_pass)]
 
         if(cek_data.empty):
-            clear()
-            console.print(f"[yellow]Data tidak ditemukan, silahkan Register untuk Melanjutkan")
+            console.print(f"[bold yellow]Data tidak ditemukan, silahkan Register untuk Melanjutkan:warning:")
             wait(1)
+            clear()
             self.tambah_member()
         else:
             cek_nama = self.data.loc[self.data["Email"] == login_mail, "Nama"].values[0]
             if(not cek_data.empty):
-                console.print(f"[green]Login Berhasil!")
-                console.print(f"Selamat Datang [blue]{cek_nama}")
-            else:
+                console.print(f"[bold green]Login Berhasil!:white_check_mark:")
+                console.print(f"Selamat Datang [bold blue]{cek_nama}[bold blue]")
+                wait(2)
                 clear()
-                console.print(f"[red]Kredensial Salah, Silahkan login kembali")
+                return True
+            else:
+                console.print(f"[red]Kredensial Salah, Silahkan login kembali:exclamation_mark:")
                 wait(1)
-                self.login_member()
+                clear()
+                return False
