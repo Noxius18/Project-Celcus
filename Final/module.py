@@ -1,8 +1,9 @@
 import pandas as pd
 import os
 import pwinput as pw
-from time import sleep as wait
 import platform
+from time import sleep as wait
+from header import header
 from rich.console import Console; from rich.table import Table; from rich import box, emoji
 
 def clear():
@@ -42,45 +43,67 @@ class DataBuku:
 
         self.dataBuku.to_csv(self.direktori_buku, index=False)
 
-        console.print(f"Buku Berhasil Ditambahkan!:white_check_mark:", style="bold green")
+        console.print(f"\nBuku Berhasil Ditambahkan!:white_check_mark:", style="bold green")
         wait(1)
         clear()
     
     def pinjam_buku(self) -> None:
-        self.lihat_buku()
-        console.print("Input [deep_sky_blue1]ID[/deep_sky_blue1] Buku yang ingin dipinjam")
-        userPinjam = str(input("> ")).upper()
+        while(True):
+            console.print(header())
+            self.lihat_buku()
+            console.print("Input [deep_sky_blue1]ID[/deep_sky_blue1] Buku yang ingin dipinjam | [1] Keluar")
+            userPinjam = str(input("> ")).upper()
 
-        list_buku = self.dataBuku[self.dataBuku["ID"] == userPinjam].index
-        
-        if(not list_buku.empty):
-            judul_buku = self.dataBuku.loc[self.dataBuku["ID"] == userPinjam, "Judul"].values[0]
-            status_buku = self.dataBuku.loc[self.dataBuku["ID"] == userPinjam, "Status"].values[0]
+            list_buku = self.dataBuku[self.dataBuku["ID"] == userPinjam].index
 
-            if(status_buku == "Sedang Dipinjam"): 
-                console.print(f"[yellow]Buku [dodger_blue2]{judul_buku}[/dodger_blue2] sedang dipinjam")
+            if(not list_buku.empty):
+                judul_buku = self.dataBuku.loc[self.dataBuku["ID"] == userPinjam, "Judul"].values[0]
+                status_buku = self.dataBuku.loc[self.dataBuku["ID"] == userPinjam, "Status"].values[0]
+
+                if(status_buku == "Sedang Dipinjam"): 
+                    console.print(f"\n[yellow]Buku [dodger_blue2]{judul_buku}[/dodger_blue2] sedang dipinjam")
+                    wait(2)
+                    clear()   
+                else:
+                    self.dataBuku.loc[list_buku, "Status"] = "Sedang Dipinjam"
+                    self.dataBuku.to_csv(self.direktori_buku, index=False)
+                    console.print(f"\nKamu telah meminjam buku [dodger_blue2]{judul_buku}[/dodger_blue2]:white_check_mark:", style="spring_green3")
+                    console.print(f"Jika sudah selesai membaca harap ke Meja Counter untuk dikembalikan:twelve_o’clock:", style="orange_red1")
+                    wait(4); clear()
+                    break
+            elif(userPinjam == "1"):
+                clear()
+                break
             else:
-                self.dataBuku.loc[list_buku, "Status"] = "Sedang Dipinjam"
-                self.dataBuku.to_csv(self.direktori_buku, index=False)
-                console.print(f"Kamu telah meminjam buku [dodger_blue2]{judul_buku}[/dodger_blue2]:white_check_mark:", style="spring_green3")
-                console.print(f"Jika sudah selesai membaca harap ke Meja Counter untuk dikembalikan:twelve_o’clock:", style="orange_red1")
-        else:
-            console.print("Maaf, Buku Tidak Tersedia:exclamation_mark:", style="bold red")
+                console.print(f"\nMaaf, Buku Tidak Tersedia :exclamation_mark:", style="bold red")
+                wait(2)
+                clear()
+                
      
     def balikin_buku(self) -> None:
-        self.lihat_buku()
-        console.print("Input [deep_sky_blue1]ID[/deep_sky_blue1] Buku yang ingin Dikembalikan")
-        userBalik = str(input("> ")).upper()
+        while(True):
+            console.print(header())
+            self.lihat_buku()
+            console.print(f"Input [deep_sky_blue1]ID[/deep_sky_blue1] Buku yang ingin Dikembalikan | [1] Keluar")
+            userBalik = str(input("> ")).upper()
 
-        list_buku = self.dataBuku[self.dataBuku["ID"] == userBalik].index
-        judul_buku = self.dataBuku.loc[self.dataBuku["ID"] == userBalik, "Judul"].values[0]
+            list_buku = self.dataBuku[self.dataBuku["ID"] == userBalik].index
 
-        if(not list_buku.empty):
-            self.dataBuku.loc[list_buku, "Status"] = "Tersedia"
-            self.dataBuku.to_csv(self.direktori_buku, index=False)
-            console.print(f'Buku [dodger_blue2]{judul_buku}[/dodger_blue2] telah dikembalikan:white_check_mark:', style="bold green")
-            wait(3)
-            clear()
+            if(not list_buku.empty):
+                judul_buku = self.dataBuku.loc[self.dataBuku["ID"] == userBalik, "Judul"].values[0]
+                self.dataBuku.loc[list_buku, "Status"] = "Tersedia"
+                self.dataBuku.to_csv(self.direktori_buku, index=False)
+
+                console.print(f"\nBuku [dodger_blue2]{judul_buku}[/dodger_blue2] telah dikembalikan:white_check_mark:", style="bold green")
+                wait(3); clear()
+                break
+            elif(userBalik == "1"):
+                clear()
+                break
+            else:
+                console.print(f"\nBuku Tidak Tersedia :exclamation_mark:", style="bold red")
+                wait(2)
+                clear()
     
     def lihat_buku(self) -> None:
         index_buku = self.dataBuku
@@ -128,7 +151,7 @@ class PanelAdmin:
         }, ignore_index=True)
 
         self.data.to_csv(self.data_direktori, index=False)
-        console.print("[bold green]Admin berhasil ditambah:white_check_mark:")
+        console.print("\n[bold green]Admin berhasil ditambah:white_check_mark:")
         wait(1); clear()
     
     def login_admin(self) -> bool: 
@@ -138,11 +161,11 @@ class PanelAdmin:
 
         cek_data = self.data[(self.data["username"] == login_user) & (self.data["password"] == login_pass)]
         if(not cek_data.empty):
-            console.print("Login Berhasil!:white_check_mark:", style='bold green')
+            console.print("\nLogin Berhasil!:white_check_mark:", style='bold green')
             wait(1); clear()
             return True
         else:
-            console.print("Kredensial Salah!, Silahkan Masuk kembali:exclamation_mark:", style="bold red")
+            console.print("\nKredensial Salah!, Silahkan Masuk kembali:exclamation_mark:", style="bold red")
             wait(1); clear()
             return False
             
@@ -157,12 +180,13 @@ class PanelMember:
         else:
             os.makedirs(os.path.dirname(self.direktori_member), exist_ok=True)
     
-    def tambah_member(self) -> None:
+    def tambah_member(self) -> bool:
+        console.print(header())
         console.print("[REGISTRASI MEMBER]", style="bold green", justify="left")
         userNama = str(input("Nama Anda: "))
         userMail = str(input("Email Anda: "))
         userPass = pw.pwinput(prompt="Input Password: ")
-        console.print("Registrasi Berhasil!:white_check_mark:", style="bold green")
+        console.print("\nRegistrasi Berhasil!:white_check_mark:", style="bold green")
         wait(1); clear()
 
         self.data = self.data._append({
@@ -172,8 +196,10 @@ class PanelMember:
         }, ignore_index=True)
 
         self.data.to_csv(self.direktori_member, index=False)
+        return True
     
     def login_member(self) -> bool:
+        console.print(header())
         console.print("[LOGIN MEMBER]", style="bold blue", justify="left")
         login_mail = str(input("Input Email: "))
         login_pass = pw.pwinput(prompt="Input Password: ")
@@ -181,20 +207,20 @@ class PanelMember:
         cek_data = self.data[(self.data["Email"] == login_mail) & (self.data["Password"] == login_pass)]
 
         if(cek_data.empty):
-            console.print(f"[bold yellow]Data tidak ditemukan, silahkan Register untuk Melanjutkan:warning:")
+            console.print(f"\n[bold yellow]Data tidak ditemukan, silahkan Register untuk Melanjutkan :warning:")
             wait(1)
             clear()
             self.tambah_member()
         else:
             cek_nama = self.data.loc[self.data["Email"] == login_mail, "Nama"].values[0]
             if(not cek_data.empty):
-                console.print(f"[bold green]Login Berhasil!:white_check_mark:")
+                console.print(f"\n[bold green]Login Berhasil! :white_check_mark:")
                 console.print(f"Selamat Datang [bold blue]{cek_nama}[bold blue]")
                 wait(2)
                 clear()
                 return True
             else:
-                console.print(f"[red]Kredensial Salah, Silahkan login kembali:exclamation_mark:")
+                console.print(f"\n[red]Kredensial Salah, Silahkan login kembali :exclamation_mark:")
                 wait(1)
                 clear()
                 return False

@@ -3,7 +3,7 @@ from time import sleep as wait
 from rich.console import Console
 from rich.panel import Panel
 from rich import box
-import importlib
+from header import header
 
 """
 Pastikan Library seperti rich dan pwinput sudah terinstall di device kalian
@@ -14,23 +14,6 @@ Untuk install library pwinput: pip install pwinput
 def not_valid():
       console.print(f"[bold red]Opsi Tidak Valid")
       wait(1); clear()
-
-def header(): 
-      header = f"""
-██████╗ ███████╗██████╗ ██████╗ ██╗   ██╗███████╗████████╗ █████╗ ██╗  ██╗ █████╗  █████╗ ███╗   ██╗    
-██╔══██╗██╔════╝██╔══██╗██╔══██╗██║   ██║██╔════╝╚══██╔══╝██╔══██╗██║ ██╔╝██╔══██╗██╔══██╗████╗  ██║    
-██████╔╝█████╗  ██████╔╝██████╔╝██║   ██║███████╗   ██║   ███████║█████╔╝ ███████║███████║██╔██╗ ██║    
-██╔═══╝ ██╔══╝  ██╔══██╗██╔═══╝ ██║   ██║╚════██║   ██║   ██╔══██║██╔═██╗ ██╔══██║██╔══██║██║╚██╗██║    
-██║     ███████╗██║  ██║██║     ╚██████╔╝███████║   ██║   ██║  ██║██║  ██╗██║  ██║██║  ██║██║ ╚████║    
-╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝    
- ██████╗███████╗██╗      ██████╗██╗   ██╗███████╗                                                       
-██╔════╝██╔════╝██║     ██╔════╝██║   ██║██╔════╝                                                       
-██║     █████╗  ██║     ██║     ██║   ██║███████╗                                                       
-██║     ██╔══╝  ██║     ██║     ██║   ██║╚════██║                                                       
-╚██████╗███████╗███████╗╚██████╗╚██████╔╝███████║                                                       
- ╚═════╝╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚══════╝                                                       
-"""
-      return header
 
 console = Console()
 
@@ -78,14 +61,14 @@ while(True):
                               DataBuku.tambah_buku()
                         elif(opsiAdmin == 2):
                               clear()
-                              console.print(header())
+                              # console.print(header())
                               DataBuku.balikin_buku()
                         elif(opsiAdmin == 3):
                               while(True):
                                     clear()
                                     console.print(header())
                                     DataBuku.lihat_buku()
-                                    console.print("Input 1 Untuk Keluar")
+                                    console.print("[1] Keluar")
                                     keluar1 = int(input("> "))
                                     if(keluar1 == 1): break
                               clear()
@@ -110,7 +93,6 @@ while(True):
 
             if(opsi_panel_member == 1):
                   clear()
-                  console.print(header())
                   if(PanelMember.login_member()):
                         while(True):
                               clear()
@@ -132,15 +114,13 @@ while(True):
                                           clear()
                                           console.print(header())
                                           DataBuku.lihat_buku()
-                                          console.print("Input 1 untuk keluar")
+                                          console.print("[1] Keluar")
                                           keluar2 = int(input("> "))
                                           if(keluar2 == 1): break
                                     clear()
                               elif(opsi_member == 2):
                                     clear()
-                                    console.print(header())
                                     DataBuku.pinjam_buku()
-                                    wait(5); clear()
                               elif(opsi_member == 3):
                                     clear()
                                     break
@@ -148,7 +128,6 @@ while(True):
                                     not_valid()
             elif(opsi_panel_member == 2):
                   clear()
-                  console.print(header())
                   PanelMember.tambah_member()
             else:
                   not_valid()
