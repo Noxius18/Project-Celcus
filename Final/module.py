@@ -1,4 +1,5 @@
 import pandas as pd
+import polars as pl
 import os
 import pwinput as pw
 import platform
@@ -171,12 +172,12 @@ class PanelAdmin:
             
 class PanelMember:
     def __init__(self, direktori_data) -> None:
-        self.data = pd.DataFrame(columns=["Nama", "Email", "Password"])
+        self.data = pl.DataFrame({"Nama": [], "Email": [], "Password": []})
         self.direktori_member = os.path.join("Data", direktori_data + ".csv")
     
     def cek_direktori(self) -> None:
         if(os.path.exists(self.direktori_member)):
-            self.data = pd.read_csv(self.direktori_member)
+            self.data = pl.read_csv(self.direktori_member)
         else:
             os.makedirs(os.path.dirname(self.direktori_member), exist_ok=True)
     
@@ -189,13 +190,15 @@ class PanelMember:
         console.print("\nRegistrasi Berhasil!:white_check_mark:", style="bold green")
         wait(1); clear()
 
-        self.data = self.data._append({
-            "Nama": userNama,
-            "Email": userMail,
-            "Password": userPass
-        }, ignore_index=True)
+        data_input_member = pl.DataFrame({
+            "Nama": [userNama],
+            "Email": [userMail],
+            "Password": [userPass]
+        })
 
-        self.data.to_csv(self.direktori_member, index=False)
+        self.data = pl.concat([self.data, data_input_member], how="vertical_relaxed")
+
+        self.data.write_csv(self.direktori_member)
         return True
     
     def login_member(self) -> bool:
@@ -204,23 +207,16 @@ class PanelMember:
         login_mail = str(input("Input Email: "))
         login_pass = pw.pwinput(prompt="Input Password: ")
 
-        cek_data = self.data[(self.data["Email"] == login_mail) & (self.data["Password"] == login_pass)]
-
-        if(cek_data.empty):
-            console.print(f"\n[bold yellow]Data tidak ditemukan, silahkan Register untuk Melanjutkan :warning:")
+        cek_data = self.data.filter((self.data["Email"] == login_mail) & (self.data["Password"] == login_pass))
+        cek_nama = self.data.filter(self.data["Email"] == login_mail)["Nama"].to_list()[0]
+        if(len(cek_data) > 0):
+            console.print(f"\n[bold green]Login Berhasil! :white_check_mark:")
+            console.print(f"Selamat Datang [bold blue]{cek_nama}[bold blue]")
+            wait(2)
+            clear()
+            return True
+        else:
+            console.print(f"\n[red]Kredensial Salah, Silahkan login kembali :exclamation_mark:")
             wait(1)
             clear()
-            self.tambah_member()
-        else:
-            cek_nama = self.data.loc[self.data["Email"] == login_mail, "Nama"].values[0]
-            if(not cek_data.empty):
-                console.print(f"\n[bold green]Login Berhasil! :white_check_mark:")
-                console.print(f"Selamat Datang [bold blue]{cek_nama}[bold blue]")
-                wait(2)
-                clear()
-                return True
-            else:
-                console.print(f"\n[red]Kredensial Salah, Silahkan login kembali :exclamation_mark:")
-                wait(1)
-                clear()
-                return False
+            return False
